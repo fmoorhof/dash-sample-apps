@@ -25,14 +25,6 @@ tree_file, metadata_file, metadata_file_stat = create_paths_file(
     virus_name, level1="", level2="", level3=""
 )
 
-# To know the minimum and the maximum values of date for slicer
-df_stat_metadata = pd.read_csv(metadata_file_stat)
-min_date, max_date = min_max_date(df_stat_metadata)
-
-# create the dictionary of slider
-marks_data = slicer(min_date, max_date)
-min_max_date_value = [min_date, max_date]
-
 fig = create_tree(virus_name, tree_file, metadata_file, "Country")
 tree_fig[tree_file] = fig
 
@@ -46,13 +38,7 @@ app.layout = html.Div(
             children=[
                 html.H2(
                     id="title",
-                    children="Phylogeny trees and global spread of 6 viruses",
-                ),
-                html.Div(
-                    id="learn_more",
-                    children=[
-                        html.Img(className="logo", src=app.get_asset_url("logo.png"))
-                    ],
+                    children="Phylogeny trees",
                 ),
             ],
         ),
