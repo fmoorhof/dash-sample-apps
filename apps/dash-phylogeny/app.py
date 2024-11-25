@@ -11,8 +11,6 @@ from utils import (
     min_max_date,
     slicer,
     create_tree,
-    create_map_bubble_year,
-    create_curve_line,
 )
 
 app = dash.Dash(__name__)
@@ -22,7 +20,6 @@ server = app.server
 virus_name = "measles"
 species = ["Avian", "Ebola"]
 tree_fig = {}
-# mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"  # needed for what?
 
 tree_file, metadata_file, metadata_file_stat = create_paths_file(
     virus_name, level1="", level2="", level3=""
@@ -39,11 +36,6 @@ min_max_date_value = [min_date, max_date]
 fig = create_tree(virus_name, tree_file, metadata_file, "Country")
 tree_fig[tree_file] = fig
 
-# fig_map_bubble = create_map_bubble_year(
-#     virus_name, metadata_file_stat, 2, min_date, max_date
-# )
-
-# fig_curve_line = create_curve_line(df_stat_metadata, virus_name, min_date, max_date)
 
 ######################################### MAIN APP #########################################
 app.layout = html.Div(
@@ -169,11 +161,7 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                # dcc.Graph(
-                #     id="curve-line-graph", className="div-card", figure=fig_curve_line
-                # ),
                 dcc.Graph(id="phylogeny-graph", className="div-card", figure=fig),
-                # dcc.Graph(id="map-graph", className="div-card", figure=fig_map_bubble),
                 dcc.Graph(id="histo-graph", className="div-card"),
             ],
         ),
@@ -243,47 +231,6 @@ def update_phylogeny_tree(
 
 
 @app.callback(
-    Output("map-graph", "figure"),
-    [
-        Input("d_virus-name", "value"),
-        Input("d_avian_opt1", "value"),
-        Input("d_avian_opt2", "value"),
-        Input("id-year", "value"),
-    ],
-)
-def _update_map(
-    virus_name,
-    avian_opt1,
-    avian_opt2,
-    id_year,
-):
-    virus_name = virus_name.lower()
-    if virus_name == "ebola" or virus_name == "zika" or virus_name == "measles":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "avian":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    df = pd.read_csv(metadata_file_stat_filtred)
-
-    min_date, max_date = id_year
-    # To select only the data between min_date and max_date
-    df = df[df["Year"] >= min_date]
-    df = df[df["Year"] <= max_date]
-    return create_map_bubble_year(
-        virus_name, metadata_file_stat_filtred, 2, min_date, max_date
-    )
-
-
-@app.callback(
     Output("id-slicer", "children"),
     [
         Input("d_virus-name", "value"),
@@ -328,46 +275,6 @@ def _update_slicer(
         marks=marks_data,
         value=min_max_date_value,
     )
-
-
-@app.callback(
-    Output("curve-line-graph", "figure"),
-    [
-        Input("d_virus-name", "value"),
-        Input("d_avian_opt1", "value"),
-        Input("d_avian_opt2", "value"),
-        Input("id-year", "value"),
-    ],
-)
-def _update_curve(
-    virus_name,
-    avian_opt1,
-    avian_opt2,
-    id_year,
-):
-    virus_name = virus_name.lower()
-    if virus_name == "ebola" or virus_name == "zika" or virus_name == "measles":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "avian":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    df = pd.read_csv(metadata_file_stat_filtred)
-    min_date, max_date = id_year
-
-    # To select only the data between min_date and max_date
-    df = df[df["Year"] >= min_date]
-    df = df[df["Year"] <= max_date]
-
-    return create_curve_line(df, virus_name, min_date, max_date)
 
 
 @app.callback(
