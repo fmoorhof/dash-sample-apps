@@ -20,9 +20,9 @@ app.title = "Phylogeny Tree Explorer"
 server = app.server
 
 virus_name = "measles"
-species = ["Avian", "Ebola", "Lassa", "Measles", "Mumps", "Zika"]
+species = ["Avian", "Ebola"]
 tree_fig = {}
-mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"  # needed for what?
+# mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"  # needed for what?
 
 tree_file, metadata_file, metadata_file_stat = create_paths_file(
     virus_name, level1="", level2="", level3=""
@@ -87,7 +87,7 @@ app.layout = html.Div(
                                                 }
                                                 for i in range(len(species))
                                             ],
-                                            value="Measles",
+                                            value="Avian",
                                         ),
                                         html.Div(id="output-container"),
                                     ],
@@ -101,69 +101,6 @@ app.layout = html.Div(
                                             children=[
                                                 html.Div(
                                                     children=[
-                                                        html.Div(
-                                                            id="controls-container_mumps",
-                                                            children=[
-                                                                dcc.Dropdown(
-                                                                    id="d_mumps",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "global",
-                                                                            "na",
-                                                                        ]
-                                                                    ],
-                                                                    value="global",
-                                                                )
-                                                            ],
-                                                            style={"display": "none"},
-                                                        ),
-                                                        html.Div(
-                                                            id="controls-container_dengue",
-                                                            children=[
-                                                                dcc.Dropdown(
-                                                                    id="d_dengue",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "all",
-                                                                            "denv1",
-                                                                            "denv2",
-                                                                            "denv3",
-                                                                            "denv4",
-                                                                        ]
-                                                                    ],
-                                                                    value="all",
-                                                                )
-                                                            ],
-                                                            style={"display": "none"},
-                                                        ),
-                                                        html.Div(
-                                                            id="controls-container_lassa",
-                                                            children=[
-                                                                dcc.Dropdown(
-                                                                    id="d_lassa",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "s",
-                                                                            "l",
-                                                                        ]
-                                                                    ],
-                                                                    value="s",
-                                                                )
-                                                            ],
-                                                            style={"display": "none"},
-                                                        ),
                                                         html.Div(
                                                             id="controls-container_avian",
                                                             children=[
@@ -199,58 +136,6 @@ app.layout = html.Div(
                                                                         ]
                                                                     ],
                                                                     value="ha",
-                                                                ),
-                                                            ],
-                                                            style={"display": "none"},
-                                                        ),
-                                                        html.Div(
-                                                            id="controls-container_flu",
-                                                            children=[
-                                                                dcc.Dropdown(
-                                                                    id="d_flu_opt1",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "h3n2",
-                                                                            "h1n1pdm",
-                                                                            "vic",
-                                                                            "yam",
-                                                                        ]
-                                                                    ],
-                                                                    value="h3n2",
-                                                                ),
-                                                                dcc.Dropdown(
-                                                                    id="d_flu_opt2",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "ha",
-                                                                            "na",
-                                                                        ]
-                                                                    ],
-                                                                    value="ha",
-                                                                ),
-                                                                dcc.Dropdown(
-                                                                    id="d_flu_opt3",
-                                                                    options=[
-                                                                        {
-                                                                            "label": i,
-                                                                            "value": i,
-                                                                        }
-                                                                        for i in [
-                                                                            "2y",
-                                                                            "3y",
-                                                                            "6y",
-                                                                            "12y",
-                                                                        ]
-                                                                    ],
-                                                                    value="3y",
                                                                 ),
                                                             ],
                                                             style={"display": "none"},
@@ -305,33 +190,6 @@ def _update_legend_gene(virus_name):
 @app.callback(
     Output("controls-container_mumps", "style"), [Input("d_virus-name", "value")]
 )
-def _update_mumps_option(virus_name):
-    if virus_name == "Mumps":
-        return {"display": "block"}
-    else:
-        return {"display": "none"}
-
-
-@app.callback(
-    Output("controls-container_dengue", "style"), [Input("d_virus-name", "value")]
-)
-def _update_dengue_option(virus_name):
-    if virus_name == "Dengue":
-        return {"display": "block"}
-    else:
-        return {"display": "none"}
-
-
-@app.callback(
-    Output("controls-container_lassa", "style"), [Input("d_virus-name", "value")]
-)
-def _update_lassa_option(virus_name):
-    if virus_name == "Lassa":
-        return {"display": "block"}
-    else:
-        return {"display": "none"}
-
-
 @app.callback(
     Output("controls-container_avian", "style"), [Input("d_virus-name", "value")]
 )
@@ -341,41 +199,18 @@ def _update_avian_option(virus_name):
     else:
         return {"display": "none"}
 
-
-@app.callback(
-    Output("controls-container_flu", "style"), [Input("d_virus-name", "value")]
-)
-def _update_flu_option(virus_name):
-    if virus_name == "Flu":
-        return {"display": "block"}
-    else:
-        return {"display": "none"}
-
-
 @app.callback(
     Output("phylogeny-graph", "figure"),
     [
         Input("d_virus-name", "value"),
-        Input("d_mumps", "value"),
-        Input("d_dengue", "value"),
-        Input("d_lassa", "value"),
         Input("d_avian_opt1", "value"),
         Input("d_avian_opt2", "value"),
-        Input("d_flu_opt1", "value"),
-        Input("d_flu_opt2", "value"),
-        Input("d_flu_opt3", "value"),
     ],
 )
 def update_phylogeny_tree(
     virus_name,
-    mumps,
-    dengue,
-    lassa,
     avian_opt1,
     avian_opt2,
-    flu_opt1,
-    flu_opt2,
-    flu_opt3,
 ):
     virus_name = virus_name.lower()
     ord_by_elt = "Country"
@@ -385,24 +220,6 @@ def update_phylogeny_tree(
             metadata_file_filtred,
             metadata_file_stat_filtred,
         ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "mumps":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=mumps, level2="", level3="")
-    elif virus_name == "dengue":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat,
-        ) = create_paths_file(virus_name, level1=dengue, level2="", level3="")
-    elif virus_name == "lassa":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=lassa, level2="", level3="")
     elif virus_name == "avian":
         (
             tree_file_filtred,
@@ -410,14 +227,6 @@ def update_phylogeny_tree(
             metadata_file_stat_filtred,
         ) = create_paths_file(
             virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    elif virus_name == "flu":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=flu_opt1, level2=flu_opt2, level3=flu_opt3
         )
 
     if tree_file_filtred in tree_fig:
@@ -437,27 +246,15 @@ def update_phylogeny_tree(
     Output("map-graph", "figure"),
     [
         Input("d_virus-name", "value"),
-        Input("d_mumps", "value"),
-        Input("d_dengue", "value"),
-        Input("d_lassa", "value"),
         Input("d_avian_opt1", "value"),
         Input("d_avian_opt2", "value"),
-        Input("d_flu_opt1", "value"),
-        Input("d_flu_opt2", "value"),
-        Input("d_flu_opt3", "value"),
         Input("id-year", "value"),
     ],
 )
 def _update_map(
     virus_name,
-    mumps,
-    dengue,
-    lassa,
     avian_opt1,
     avian_opt2,
-    flu_opt1,
-    flu_opt2,
-    flu_opt3,
     id_year,
 ):
     virus_name = virus_name.lower()
@@ -467,24 +264,6 @@ def _update_map(
             metadata_file_filtred,
             metadata_file_stat_filtred,
         ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "mumps":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=mumps, level2="", level3="")
-    elif virus_name == "dengue":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=dengue, level2="", level3="")
-    elif virus_name == "lassa":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=lassa, level2="", level3="")
     elif virus_name == "avian":
         (
             tree_file_filtred,
@@ -492,14 +271,6 @@ def _update_map(
             metadata_file_stat_filtred,
         ) = create_paths_file(
             virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    elif virus_name == "flu":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=flu_opt1, level2=flu_opt2, level3=flu_opt3
         )
     df = pd.read_csv(metadata_file_stat_filtred)
 
@@ -516,26 +287,14 @@ def _update_map(
     Output("id-slicer", "children"),
     [
         Input("d_virus-name", "value"),
-        Input("d_mumps", "value"),
-        Input("d_dengue", "value"),
-        Input("d_lassa", "value"),
         Input("d_avian_opt1", "value"),
         Input("d_avian_opt2", "value"),
-        Input("d_flu_opt1", "value"),
-        Input("d_flu_opt2", "value"),
-        Input("d_flu_opt3", "value"),
     ],
 )
 def _update_slicer(
     virus_name,
-    mumps,
-    dengue,
-    lassa,
     avian_opt1,
     avian_opt2,
-    flu_opt1,
-    flu_opt2,
-    flu_opt3,
 ):
     virus_name = virus_name.lower()
     if virus_name == "ebola" or virus_name == "zika" or virus_name == "measles":
@@ -544,24 +303,6 @@ def _update_slicer(
             metadata_file_filtred,
             metadata_file_stat_filtred,
         ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "mumps":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=mumps, level2="", level3="")
-    elif virus_name == "dengue":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=dengue, level2="", level3="")
-    elif virus_name == "lassa":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=lassa, level2="", level3="")
     elif virus_name == "avian":
         (
             tree_file_filtred,
@@ -569,14 +310,6 @@ def _update_slicer(
             metadata_file_stat_filtred,
         ) = create_paths_file(
             virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    elif virus_name == "flu":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=flu_opt1, level2=flu_opt2, level3=flu_opt3
         )
     df = pd.read_csv(metadata_file_stat_filtred)
     min_date, max_date = min_max_date(df)
@@ -601,27 +334,15 @@ def _update_slicer(
     Output("curve-line-graph", "figure"),
     [
         Input("d_virus-name", "value"),
-        Input("d_mumps", "value"),
-        Input("d_dengue", "value"),
-        Input("d_lassa", "value"),
         Input("d_avian_opt1", "value"),
         Input("d_avian_opt2", "value"),
-        Input("d_flu_opt1", "value"),
-        Input("d_flu_opt2", "value"),
-        Input("d_flu_opt3", "value"),
         Input("id-year", "value"),
     ],
 )
 def _update_curve(
     virus_name,
-    mumps,
-    dengue,
-    lassa,
     avian_opt1,
     avian_opt2,
-    flu_opt1,
-    flu_opt2,
-    flu_opt3,
     id_year,
 ):
     virus_name = virus_name.lower()
@@ -631,24 +352,6 @@ def _update_curve(
             metadata_file_filtred,
             metadata_file_stat_filtred,
         ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "mumps":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=mumps, level2="", level3="")
-    elif virus_name == "dengue":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=dengue, level2="", level3="")
-    elif virus_name == "lassa":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=lassa, level2="", level3="")
     elif virus_name == "avian":
         (
             tree_file_filtred,
@@ -656,14 +359,6 @@ def _update_curve(
             metadata_file_stat_filtred,
         ) = create_paths_file(
             virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    elif virus_name == "flu":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=flu_opt1, level2=flu_opt2, level3=flu_opt3
         )
     df = pd.read_csv(metadata_file_stat_filtred)
     min_date, max_date = id_year
@@ -679,27 +374,15 @@ def _update_curve(
     Output("histo-graph", "figure"),
     [
         Input("d_virus-name", "value"),
-        Input("d_mumps", "value"),
-        Input("d_dengue", "value"),
-        Input("d_lassa", "value"),
         Input("d_avian_opt1", "value"),
         Input("d_avian_opt2", "value"),
-        Input("d_flu_opt1", "value"),
-        Input("d_flu_opt2", "value"),
-        Input("d_flu_opt3", "value"),
         Input("id-year", "value"),
     ],
 )
 def _update_histo(
     virus_name,
-    mumps,
-    dengue,
-    lassa,
     avian_opt1,
     avian_opt2,
-    flu_opt1,
-    flu_opt2,
-    flu_opt3,
     id_year,
 ):
     virus_name = virus_name.lower()
@@ -709,24 +392,6 @@ def _update_histo(
             metadata_file_filtred,
             metadata_file_stat_filtred,
         ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "mumps":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=mumps, level2="", level3="")
-    elif virus_name == "dengue":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=dengue, level2="", level3="")
-    elif virus_name == "lassa":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1=lassa, level2="", level3="")
     elif virus_name == "avian":
         (
             tree_file_filtred,
@@ -734,14 +399,6 @@ def _update_histo(
             metadata_file_stat_filtred,
         ) = create_paths_file(
             virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    elif virus_name == "flu":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=flu_opt1, level2=flu_opt2, level3=flu_opt3
         )
     df = pd.read_csv(metadata_file_stat_filtred)
     min_date, max_date = id_year
