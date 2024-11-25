@@ -22,7 +22,7 @@ server = app.server
 virus_name = "measles"
 species = ["Avian", "Ebola", "Lassa", "Measles", "Mumps", "Zika"]
 tree_fig = {}
-mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"
+mapbox_access_token = "pk.eyJ1IjoicGxvdGx5bWFwYm94IiwiYSI6ImNrOWJqb2F4djBnMjEzbG50amg0dnJieG4ifQ.Zme1-Uzoi75IaFbieBDl3A"  # needed for what?
 
 tree_file, metadata_file, metadata_file_stat = create_paths_file(
     virus_name, level1="", level2="", level3=""
@@ -39,11 +39,11 @@ min_max_date_value = [min_date, max_date]
 fig = create_tree(virus_name, tree_file, metadata_file, "Country")
 tree_fig[tree_file] = fig
 
-fig_map_bubble = create_map_bubble_year(
-    virus_name, metadata_file_stat, 2, min_date, max_date
-)
+# fig_map_bubble = create_map_bubble_year(
+#     virus_name, metadata_file_stat, 2, min_date, max_date
+# )
 
-fig_curve_line = create_curve_line(df_stat_metadata, virus_name, min_date, max_date)
+# fig_curve_line = create_curve_line(df_stat_metadata, virus_name, min_date, max_date)
 
 ######################################### MAIN APP #########################################
 app.layout = html.Div(
@@ -284,11 +284,11 @@ app.layout = html.Div(
                         ),
                     ],
                 ),
-                dcc.Graph(
-                    id="curve-line-graph", className="div-card", figure=fig_curve_line
-                ),
+                # dcc.Graph(
+                #     id="curve-line-graph", className="div-card", figure=fig_curve_line
+                # ),
                 dcc.Graph(id="phylogeny-graph", className="div-card", figure=fig),
-                dcc.Graph(id="map-graph", className="div-card", figure=fig_map_bubble),
+                # dcc.Graph(id="map-graph", className="div-card", figure=fig_map_bubble),
                 dcc.Graph(id="histo-graph", className="div-card"),
             ],
         ),
