@@ -8,8 +8,6 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 from utils import (
     create_paths_file,
-    min_max_date,
-    slicer,
     create_tree,
 )
 
@@ -17,7 +15,7 @@ app = dash.Dash(__name__)
 app.title = "Phylogeny Tree Explorer"
 server = app.server
 
-virus_name = "measles"
+virus_name = "ebola"
 species = ["Avian", "Ebola"]
 tree_fig = {}
 
@@ -126,29 +124,9 @@ app.layout = html.Div(
                                 ),
                             ],
                         ),
-                        html.Div(
-                            className="six columns",
-                            children=[
-                                html.H6(children="Data Range"),
-                                html.Div(
-                                    id="id-slicer",
-                                    children=[
-                                        dcc.RangeSlider(
-                                            id="id-year",
-                                            min=min_date,
-                                            max=max_date,
-                                            step=1,
-                                            marks=marks_data,
-                                            value=min_max_date_value,
-                                        )
-                                    ],
-                                ),
-                            ],
-                        ),
                     ],
                 ),
                 dcc.Graph(id="phylogeny-graph", className="div-card", figure=fig),
-                dcc.Graph(id="histo-graph", className="div-card"),
             ],
         ),
     ]
@@ -214,119 +192,6 @@ def update_phylogeny_tree(
         tree_fig[tree_file_filtred] = fig
 
     return fig
-
-
-@app.callback(
-    Output("id-slicer", "children"),
-    [
-        Input("d_virus-name", "value"),
-        Input("d_avian_opt1", "value"),
-        Input("d_avian_opt2", "value"),
-    ],
-)
-def _update_slicer(
-    virus_name,
-    avian_opt1,
-    avian_opt2,
-):
-    virus_name = virus_name.lower()
-    if virus_name == "ebola" or virus_name == "zika" or virus_name == "measles":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "avian":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    df = pd.read_csv(metadata_file_stat_filtred)
-    min_date, max_date = min_max_date(df)
-    # create the dictionary of slider
-    marks_data = slicer(min_date, max_date)
-    min_max_date_value = [min_date, max_date]
-
-    # To select only the data between min_date and max_date
-    df = df[df["Year"] >= min_date]
-    df = df[df["Year"] <= max_date]
-    return dcc.RangeSlider(
-        id="id-year",
-        min=min_date,
-        max=max_date,
-        step=1,
-        marks=marks_data,
-        value=min_max_date_value,
-    )
-
-
-@app.callback(
-    Output("histo-graph", "figure"),
-    [
-        Input("d_virus-name", "value"),
-        Input("d_avian_opt1", "value"),
-        Input("d_avian_opt2", "value"),
-        Input("id-year", "value"),
-    ],
-)
-def _update_histo(
-    virus_name,
-    avian_opt1,
-    avian_opt2,
-    id_year,
-):
-    virus_name = virus_name.lower()
-    if virus_name == "ebola" or virus_name == "zika" or virus_name == "measles":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(virus_name, level1="", level2="", level3="")
-    elif virus_name == "avian":
-        (
-            tree_file_filtred,
-            metadata_file_filtred,
-            metadata_file_stat_filtred,
-        ) = create_paths_file(
-            virus_name, level1=avian_opt1, level2=avian_opt2, level3=""
-        )
-    df = pd.read_csv(metadata_file_stat_filtred)
-    min_date, max_date = id_year
-
-    # To select only the data between min_date and max_date
-    df = df[df["Year"] >= min_date]
-    df = df[df["Year"] <= max_date]
-
-    # Count the number of viruses by Country
-    df_group_by_country = df.groupby(["Country"])["Value"].sum()
-    # Translate groupby object in dataframe
-    df_group_by_country = df_group_by_country.to_frame()
-    # Rename the first column in Value
-    df_group_by_country.columns = ["Value"]
-    # Move the index values (i.e. Country column) in column and reset index
-    df_group_by_country = df_group_by_country.reset_index()
-
-    return {
-        "data": [
-            {
-                "x": df_group_by_country["Country"],
-                "y": df_group_by_country["Value"],
-                "type": "bar",
-                "marker": dict(color="#8380ff"),
-            }
-        ],
-        "layout": {
-            "autosize": True,
-            "margin": dict(l=30, r=30, b=70, t=40),
-            "title": "<br>Distribution of {} <br>Between {} and {}".format(
-                virus_name.title(), min_date, max_date
-            ),
-            "font": dict(family="Open Sans"),
-        },
-    }
 
 
 # Running the server
