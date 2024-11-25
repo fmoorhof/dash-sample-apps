@@ -139,9 +139,7 @@ def _update_legend_gene(virus_name):
     return 'You have selected "{}" virus'.format(virus_name)
 
 
-@app.callback(
-    Output("controls-container_mumps", "style"), [Input("d_virus-name", "value")]
-)
+
 @app.callback(
     Output("controls-container_avian", "style"), [Input("d_virus-name", "value")]
 )

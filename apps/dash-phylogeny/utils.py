@@ -289,7 +289,7 @@ def create_curve_line(df, virus_name, min_date, max_date):
     return fig
 
 
-def create_tree(virus_name, tree_file, metadata_file, ord_by):
+def create_tree_old(virus_name, tree_file, metadata_file, ord_by):
     tree = Phylo.read(tree_file, "newick")
     x_coords = get_x_coordinates(tree)
     y_coords = get_y_coordinates(tree)
@@ -524,6 +524,113 @@ def create_tree(virus_name, tree_file, metadata_file, ord_by):
             color[i] = Europe_color[df.loc[k, "Country"]]
         else:
             pass
+
+    axis = dict(
+        showline=False,
+        zeroline=False,
+        showgrid=False,
+        showticklabels=False,
+        title="",  # y title
+    )
+
+    label_legend = set(list(df[ord_by]))
+    nodes = []
+
+    for elt in label_legend:
+        node = dict(
+            type="scatter",
+            x=X,
+            y=Y,
+            mode="markers",
+            marker=dict(color=color, size=5),
+            text=text,  # vignet information of each node
+            hoverinfo="",
+            name=elt,
+        )
+        nodes.append(node)
+
+    layout = dict(
+        height=800,
+        title=graph_title,
+        dragmode="select",
+        autosize=True,
+        showlegend=True,
+        xaxis=dict(
+            showline=True,
+            zeroline=False,
+            showgrid=True,  # To visualize the vertical lines
+            ticklen=4,
+            showticklabels=True,
+            title="Branch Length",
+        ),
+        yaxis=axis,
+        hovermode="closest",
+        shapes=line_shapes,
+        legend={"x": 0, "y": 1},
+        font=dict(family="Open Sans"),
+    )
+
+    fig = dict(data=nodes, layout=layout)
+    return fig
+
+
+def create_tree(virus_name, tree_file, metadata_file, ord_by):
+    tree = Phylo.read(tree_file, "newick")
+    x_coords = get_x_coordinates(tree)
+    y_coords = get_y_coordinates(tree)
+    line_shapes = []
+    draw_clade(
+        tree.root,
+        0,
+        line_shapes,
+        line_color="rgb(25,25,25)",
+        line_width=1,
+        x_coords=x_coords,
+        y_coords=y_coords,
+    )
+    my_tree_clades = x_coords.keys()
+    X = []
+    Y = []
+    text = []
+
+    for cl in my_tree_clades:
+        X.append(x_coords[cl])
+        Y.append(y_coords[cl])
+        text.append(cl.name)
+
+    df = pd.read_csv(metadata_file)
+
+    nb_genome = len(df)
+
+    graph_title = create_title(virus_name, nb_genome)
+    intermediate_node_color = "rgb(100,100,100)"
+
+    country = []
+    region = []
+    color = [intermediate_node_color] * len(X)
+
+    for k, strain in enumerate(df["Strain"]):
+
+        i = text.index(strain)
+
+        # Split journal title if gt 50 characters
+        new_title_journal = split_at_n_caracter(df.loc[k, "Journal"], 50)
+
+        text[i] = (
+            text[i]
+            + "<br>Country: "
+            + "{:s}".format(df.loc[k, "Country"])
+            + "<br>Region: "
+            + "{:s}".format(df.loc[k, "Region"])
+            + "<br>Collection date: "
+            + "{:s}".format(df.loc[k, "Date"])
+            + "<br>Journal: "
+            + "{:s}".format(new_title_journal)
+            + "<br>Authors: "
+            + "{:s}".format(df.loc[k, "Authors"])
+        )
+        country.append(df.loc[k, "Country"])
+        region.append(df.loc[k, "Region"])
 
     axis = dict(
         showline=False,
